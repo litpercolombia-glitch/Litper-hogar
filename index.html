@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Litper Hogar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f3f4f6;
+      }
+      
+      /* 
+       * HYPER-REALISTIC DIAMOND QUILTED TEXTURE 
+       * Simulates: 3D Puff, Stitching indentation, and Satin Sheen
+       */
+      .diamond-texture {
+        position: relative;
+        overflow: hidden;
+        /* Soft bezel to mimic fabric wrapping around foam */
+        box-shadow: 
+          inset 1px 1px 2px rgba(255,255,255,0.3),
+          inset -1px -1px 2px rgba(0,0,0,0.1),
+          0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      /* Layer 1: The Indented Stitching Lines */
+      .diamond-texture::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        /* The stitch lines - dark thin lines */
+        background-image: 
+          linear-gradient(45deg, rgba(0,0,0,0.15) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.15) 75%, rgba(0,0,0,0.15)), 
+          linear-gradient(-45deg, rgba(0,0,0,0.15) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.15) 75%, rgba(0,0,0,0.15));
+        background-position: 0 0;
+        background-size: 14px 14px; /* Size of diamonds */
+        z-index: 1;
+        pointer-events: none;
+        mix-blend-mode: multiply;
+      }
+
+      /* Layer 2: The 3D Puff Highlights & Satin Sheen */
+      .diamond-texture::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        /* 
+           Radial gradient creates a "highlight" in the center of each diamond square,
+           simulating the fabric bulging out between stitches.
+        */
+        background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.25) 0%, transparent 70%);
+        background-size: 14px 14px; /* Matches diamond size */
+        background-position: 7px 7px; /* Offset to center the highlight in the diamond */
+        z-index: 2;
+        pointer-events: none;
+        mix-blend-mode: overlay; /* Blends with base color for realistic lighting */
+      }
+
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      
+      /* Professional Bounce In Animation */
+      @keyframes bounce-in {
+        0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+        50% { opacity: 1; transform: translateY(-5px) scale(1.02); }
+        70% { transform: translateY(2px) scale(1); }
+        100% { transform: translateY(0) scale(1); }
+      }
+      
+      .animate-bounce-in {
+        animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      
+      /* Subtle Float for Hover */
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+      }
+      
+      .hover-float:hover {
+        animation: float 2s ease-in-out infinite;
+      }
+      
+      /* Horizontal Scroll Bounce Animation */
+      @keyframes bounce-right {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(3px); }
+      }
+      .animate-bounce-right {
+        animation: bounce-right 1s infinite;
+      }
+
+      /* Scanning Laser Animation for Loading State */
+      @keyframes scan {
+        0% { top: -10%; opacity: 0; }
+        15% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { top: 110%; opacity: 0; }
+      }
+      .animate-scan {
+        animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

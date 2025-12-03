@@ -1,0 +1,8 @@
+{
+  "name": "Litper Hogar",
+  "description": "Visualizador de protectores de cama con IA y asesoría de diseño.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
