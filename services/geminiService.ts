@@ -1,24 +1,33 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import type { GenerateContentResponse } from "@google/genai";
 import { MODEL_EDIT, MODEL_GENERATE_PRO, MODEL_ANALYZE, MODEL_FAST_CHAT } from '../constants';
 import { AspectRatio, ImageSize } from '../types';
 
-// Helper to get the correct client. 
-// For Pro models (Generation), we strictly prefer the user selected key if available to avoid quota issues.
-const getClient = async (requireUserKey = false) => {
-  let apiKey = process.env.API_KEY;
+// Litper: la clave de Gemini ya NO vive en el navegador.
+// Todas las llamadas pasan por el proxy seguro (Supabase Edge Function),
+// que guarda GEMINI_API_KEY del lado servidor.
+const GEMINI_PROXY_URL =
+  (import.meta as any).env?.VITE_GEMINI_PROXY_URL ||
+  "https://gtsivwbnhcawvmsfujby.supabase.co/functions/v1/gemini-proxy";
 
-  if (requireUserKey && (window as any).aistudio) {
-    const hasKey = await (window as any).aistudio.hasSelectedApiKey();
-    if (hasKey) {
-      // If a key is selected in the AI Studio wrapper, we instantiate without passing a key string
-      // The wrapper injects it, or we rely on process.env being updated by the wrapper.
-      // However, the standard way in these environments is often just using process.env.API_KEY 
-      // *after* selection. 
-      // We will assume process.env.API_KEY is populated.
-    }
-  }
-  
-  return new GoogleGenAI({ apiKey });
+// Cliente "shim": mantiene la misma interfaz ai.models.generateContent(req)
+// que usaba el SDK, pero por debajo llama al proxy. No expone ninguna clave.
+const getClient = async (_requireUserKey = false) => {
+  return {
+    models: {
+      generateContent: async (req: any): Promise<GenerateContentResponse> => {
+        const res = await fetch(GEMINI_PROXY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(req),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error || `Proxy error ${res.status}`);
+        }
+        return data as GenerateContentResponse;
+      },
+    },
+  };
 };
 
 // Utility to ensure image is in a supported format (PNG/JPEG/WEBP)
